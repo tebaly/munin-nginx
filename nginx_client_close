@@ -1,0 +1,37 @@
+#!/usr/bin/php
+<?php
+if ($argv[1] == 'config') {
+    echo "graph_category nginx\n";
+    echo "graph_title Nginx client close time\n";
+    echo "graph_vlabel avg\n";
+    echo "graph_scale no\n";
+#    echo "graph_args --base 1000\n";
+    
+    echo "max.label Max\n";
+    echo "max.type DERIVE\n";
+    
+    echo "avg.label Avg\n";
+    echo "avg.type DERIVE\n";
+    
+    echo "min.label Min\n";
+    echo "min.type DERIVE\n";
+    
+} else {
+    $data = `grep '\" 499' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
+    $data = explode("\n", $data);
+    $result = [0, 0, 0];
+    if (count($data)) {
+        $data = array_unique($data);
+        unset($data[array_search(0, $data)]);
+        unset($data[array_search('', $data)]);
+        $result[0] = round(max($data), 2);
+        $result[1] = round(array_sum($data)/count($data), 2);
+        $result[2] = round(min($data), 2);
+    }
+    
+    echo "max.value ".$result[0]."\n";
+    echo "avg.value ".$result[1]."\n";
+    echo "min.value ".$result[2]."\n";
+    
+}
+
