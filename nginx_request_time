@@ -3,49 +3,91 @@
 if ($argv[1] == 'config') {
     echo "graph_category nginx\n";
     echo "graph_title Nginx request time\n";
-    echo "graph_vlabel %\n";
+    echo "graph_vlabel count\n";
     echo "graph_scale no\n";
     echo "graph_args --base 1000 -r --lower-limit 0 --upper-limit 100\n";
     
-    echo "time-t0.label Fast (50ms)\n";
+    echo "time-t0.label <50ms\n";
     echo "time-t0.draw AREA\n";
     echo "time-t0.type GAUGE\n";
     echo "time-t0.min 0\n";
     
-    echo "time-t1.label Medium (100ms)\n";
+    echo "time-t1.label <100ms\n";
     echo "time-t1.draw STACK\n";
     echo "time-t1.type GAUGE\n";
     echo "time-t1.min 0\n";
     
-    echo "time-t2.label Slow (1s)\n";
+    echo "time-t2.label <250ms\n";
     echo "time-t2.draw STACK\n";
     echo "time-t2.type GAUGE\n";
     echo "time-t2.min 0\n";
     
-    echo "time-t3.label Anomaly (1s+)\n";
+    echo "time-t3.label <500ms\n";
     echo "time-t3.draw STACK\n";
     echo "time-t3.type GAUGE\n";
     echo "time-t3.min 0\n";
+    
+    echo "time-t4.label <750ms\n";
+    echo "time-t4.draw STACK\n";
+    echo "time-t4.type GAUGE\n";
+    echo "time-t4.min 0\n";
+    
+    echo "time-t5.label <1s\n";
+    echo "time-t5.draw STACK\n";
+    echo "time-t5.type GAUGE\n";
+    echo "time-t5.min 0\n";
+    
+    echo "time-t6.label <1.5s\n";
+    echo "time-t6.draw STACK\n";
+    echo "time-t6.type GAUGE\n";
+    echo "time-t6.min 0\n";
+    
+    echo "time-t7.label <2s\n";
+    echo "time-t7.draw STACK\n";
+    echo "time-t7.type GAUGE\n";
+    echo "time-t7.min 0\n";
+    
+    echo "time-t8.label <3s\n";
+    echo "time-t8.draw STACK\n";
+    echo "time-t8.type GAUGE\n";
+    echo "time-t8.min 0\n";
+    
+    echo "time-t9.label 3s+\n";
+    echo "time-t9.draw STACK\n";
+    echo "time-t9.type GAUGE\n";
+    echo "time-t9.min 0\n";
 } else {
-    $result = `grep '\" 200' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
+    $result = `grep -E '\" (200|499)' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
     $resultArray = explode("\n", $result);
-    $return = array(0, 0, 0, 0);
+    $return = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     if (count($resultArray)) {
         foreach ($resultArray as $one) {
             if ($one < 0.05) {
                 $return[0] ++;
             } elseif ($one < 0.1) {
                 $return[1] ++;
-            } elseif ($one < 1) {
+            } elseif ($one < 0.25) {
                 $return[2] ++;
-            } else {
+            } elseif ($one < 0.5) {
                 $return[3] ++;
+            } elseif ($one < 0.75) {
+                $return[4] ++;
+            } elseif ($one < 1) {
+                $return[5] ++;
+            } elseif ($one < 1.5) {
+                $return[6] ++;
+            } elseif ($one < 2) {
+                $return[7] ++;
+            } elseif ($one < 3) {
+                $return[8] ++;
+            } else {
+                $return[9] ++;
             }
         }
     }
-    $all_request = array_sum($return);
+    
     foreach ($return as $key => $one) {
-        $value = round(($one / $all_request * 100), 4);
+        $value = $one;
         echo 'time-t' . $key . '.value ' . $value . "\n";
     }
 }
