@@ -1,0 +1,51 @@
+#!/usr/bin/php
+<?php
+if ($argv[1] == 'config') {
+    echo "graph_category nginx\n";
+    echo "graph_title Nginx request time freq\n";
+    echo "graph_vlabel %\n";
+    echo "graph_scale no\n";
+    echo "graph_args --base 1000 -r --lower-limit 0 --upper-limit 100\n";
+    
+    echo "time-t0.label Fast (50ms)\n";
+    echo "time-t0.draw AREA\n";
+    echo "time-t0.type GAUGE\n";
+    echo "time-t0.min 0\n";
+    
+    echo "time-t1.label Medium (100ms)\n";
+    echo "time-t1.draw STACK\n";
+    echo "time-t1.type GAUGE\n";
+    echo "time-t1.min 0\n";
+    
+    echo "time-t2.label Slow (1s)\n";
+    echo "time-t2.draw STACK\n";
+    echo "time-t2.type GAUGE\n";
+    echo "time-t2.min 0\n";
+    
+    echo "time-t3.label Anomaly (1s+)\n";
+    echo "time-t3.draw STACK\n";
+    echo "time-t3.type GAUGE\n";
+    echo "time-t3.min 0\n";
+} else {
+    $result = `grep -E '\" (200|499)' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
+    $resultArray = explode("\n", $result);
+    $return = array(0, 0, 0, 0);
+    if (count($resultArray)) {
+        foreach ($resultArray as $one) {
+            if ($one < 0.05) {
+                $return[0] ++;
+            } elseif ($one < 0.1) {
+                $return[1] ++;
+            } elseif ($one < 1) {
+                $return[2] ++;
+            } else {
+                $return[3] ++;
+            }
+        }
+    }
+    $all_request = array_sum($return);
+    foreach ($return as $key => $one) {
+        $value = round(($one / $all_request * 100), 4);
+        echo 'time-t' . $key . '.value ' . $value . "\n";
+    }
+}
