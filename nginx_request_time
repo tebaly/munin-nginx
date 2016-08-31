@@ -6,25 +6,25 @@ if ($argv[1] == 'config') {
         graph_vlabel %
         graph_scale no
         graph_args --base 1000 -r --lower-limit 0 --upper-limit 100
-        t0.label less 50ms
+        t0.label Fast (50ms)
         t0.draw AREA
         t0.type GAUGE
         t0.min 0
-        t1.label less 100ms
+        t1.label Medium (100ms)
         t1.draw STACK
         t1.type GAUGE
         t1.min 0
-        t2.label less 1s
+        t2.label Slow (1s)
         t2.draw STACK
         t2.type GAUGE
         t2.min 0
-        t3.label more 1s
+        t3.label Anomaly (1s+)
         t3.draw STACK
         t3.type GAUGE
         t3.min 0
     ";
 } else {
-    $result = `grep '\" 200 ' /var/log/nginx/access.log.0 | awk '{print $9;}'`;
+    $result = `grep 'rt=' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
     $resultArray = explode("\n", $result);
     $return = array(0, 0, 0, 0);
     if (count($resultArray)) {
