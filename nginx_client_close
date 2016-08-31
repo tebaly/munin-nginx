@@ -5,16 +5,16 @@ if ($argv[1] == 'config') {
     echo "graph_title Nginx client close time\n";
     echo "graph_vlabel avg\n";
     echo "graph_scale no\n";
-#    echo "graph_args --base 1000\n";
+    echo "graph_args --base 1000\n";
     
     echo "max.label Max\n";
-    echo "max.type DERIVE\n";
+    echo "max.type GAUGE\n";
     
     echo "avg.label Avg\n";
-    echo "avg.type DERIVE\n";
+    echo "avg.type GAUGE\n";
     
     echo "min.label Min\n";
-    echo "min.type DERIVE\n";
+    echo "min.type GAUGE\n";
     
 } else {
     $data = `grep '\" 499' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
