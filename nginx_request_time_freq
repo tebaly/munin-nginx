@@ -7,12 +7,12 @@ if ($argv[1] == 'config') {
     echo "graph_scale no\n";
     echo "graph_args --base 1000 -r --lower-limit 0 --upper-limit 100\n";
     
-    echo "time-t0.label Fast (50ms)\n";
+    echo "time-t0.label Fast (100ms)\n";
     echo "time-t0.draw AREA\n";
     echo "time-t0.type GAUGE\n";
     echo "time-t0.min 0\n";
     
-    echo "time-t1.label Medium (100ms)\n";
+    echo "time-t1.label Medium (500ms)\n";
     echo "time-t1.draw STACK\n";
     echo "time-t1.type GAUGE\n";
     echo "time-t1.min 0\n";
@@ -32,9 +32,9 @@ if ($argv[1] == 'config') {
     $return = array(0, 0, 0, 0);
     if (count($resultArray)) {
         foreach ($resultArray as $one) {
-            if ($one < 0.05) {
+            if ($one < 0.1) {
                 $return[0] ++;
-            } elseif ($one < 0.1) {
+            } elseif ($one < 0.5) {
                 $return[1] ++;
             } elseif ($one < 1) {
                 $return[2] ++;
