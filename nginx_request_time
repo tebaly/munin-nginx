@@ -47,7 +47,7 @@ if ($argv[1] == 'config') {
     echo "time-t9.type DERIVE\n";
     echo "time-t9.min 0\n";
 } else {
-    $result = `tail -n 10000 /var/log/nginx/access.log | grep -E '\" (200)' | grep '(?<=rt=).*' -oP`;
+    $result = `grep -E '\" (200)' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
     $resultArray = explode("\n", $result);
     $return = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     if (count($resultArray)) {
