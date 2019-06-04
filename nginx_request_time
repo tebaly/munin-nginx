@@ -6,48 +6,48 @@ if ($argv[1] == 'config') {
     echo "graph_vlabel request\n";
 #    echo "graph_args --base 1000\n";
 #    echo "graph_period minute"
-    
+
     echo "time-t0.label < 0.05\n";
     echo "time-t0.type DERIVE\n";
     echo "time-t0.min 0\n";
-    
+
     echo "time-t1.label < 0.10\n";
     echo "time-t1.type DERIVE\n";
     echo "time-t1.min 0\n";
-    
+
     echo "time-t2.label < 0.25\n";
     echo "time-t2.type DERIVE\n";
     echo "time-t2.min 0\n";
-    
+
     echo "time-t3.label < 0.50\n";
     echo "time-t3.type DERIVE\n";
     echo "time-t3.min 0\n";
-    
+
     echo "time-t4.label < 0.75\n";
     echo "time-t4.type DERIVE\n";
     echo "time-t4.min 0\n";
-    
+
     echo "time-t5.label < 1.00\n";
     echo "time-t5.type DERIVE\n";
     echo "time-t5.min 0\n";
-    
+
     echo "time-t6.label < 1.50\n";
     echo "time-t6.type DERIVE\n";
     echo "time-t6.min 0\n";
-    
+
     echo "time-t7.label < 2.00\n";
     echo "time-t7.type DERIVE\n";
     echo "time-t7.min 0\n";
-    
+
     echo "time-t8.label < 3.00\n";
     echo "time-t8.type DERIVE\n";
     echo "time-t8.min 0\n";
-    
+
     echo "time-t9.label > 3.00\n";
     echo "time-t9.type DERIVE\n";
     echo "time-t9.min 0\n";
 } else {
-    $result = `grep -E '\" (200)' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
+    $result = `tail -c 1000 | grep -E '\" (200)' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
     $resultArray = explode("\n", $result);
     $return = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     if (count($resultArray)) {
@@ -75,7 +75,7 @@ if ($argv[1] == 'config') {
             }
         }
     }
-    
+
     foreach ($return as $key => $value) {
         //$value = $one;
         echo "time-t$key.value $value\n";
