@@ -17,7 +17,7 @@ if ($argv[1] == 'config') {
     echo "min.type GAUGE\n";
 
 } else {
-    $data = `tail -c 1000 | grep '\" 499' /var/log/nginx/access.log | grep '(?<=rt=).*' -oP`;
+    $data = `tail -n 10000 /var/log/nginx/access.log | grep '\" 499' | grep '(?<=rt=).*' -oP`;
     $data = explode("\n", $data);
     $result = [0, 0, 0];
     if (count($data)) {
